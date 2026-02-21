@@ -22,6 +22,14 @@ public class Task4 {
   }
 
   public List<ApiPersonDto> convert(List<Person> persons) {
-    return new ArrayList<>();
+
+    List<ApiPersonDto> result = new ArrayList<>();
+    //через стрим это можно сделать .map, но тут решил по классике циклом обойтись
+    for (Person pers : persons){
+      common.ApiPersonDto newPers = personConverter.convert(pers);
+      result.add(newPers);
+    }
+
+    return result;
   }
 }
