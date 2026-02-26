@@ -6,6 +6,7 @@ import common.PersonConverter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /*
 Задача 5
@@ -23,14 +24,9 @@ public class Task5 {
   }
 
   public List<ApiPersonDto> convert(List<Person> persons, Map<Integer, Integer> personAreaIds) {
-
-    List<ApiPersonDto> result = new ArrayList<>();
-    //бежим по персонам, из мапы достаем нужный id региона и потом конвертим в ApiPersonDto
-    for (Person pers : persons){
-      Integer areaId = personAreaIds.get(pers.id());
-      common.ApiPersonDto persDto = personConverter.convert(pers, areaId);
-      result.add(persDto);
-    }
-    return result;
+    //бежим по персонам, конвертим в ApiPersonDto с нужным регионом
+    return persons.stream()
+        .map(p-> personConverter.convert(p, personAreaIds.get(p.id()) ))
+        .collect(Collectors.toList());
   }
 }

@@ -18,13 +18,11 @@ public class Task7 {
 
     //пробегаемся по вакансиям компанией и закидываем в мапу
     // применительно к стримам: из стрима команий вытягиваем стрим сетов вакасий, из него вытягиваем стрим названий и собираем их в мапу
-    Set<String> result = companies.stream()
+    return companies.stream()
         .map(Company::getVacancies)
         .flatMap(Set::stream)
         .map(Vacancy::getTitle)
         .collect(Collectors.toSet());
-
-    return result;
   }
 
 }

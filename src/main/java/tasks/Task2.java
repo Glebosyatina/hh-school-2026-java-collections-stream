@@ -21,11 +21,9 @@ public class Task2 {
                                                      int limit) {
 
     //concat последовательно объединяем два стрима Personов, сортируем по дате создания, и выставляем лимит, после коллектором собираем в List
-    List<Person> result = Stream.concat(persons1.stream(), persons2.stream())
+    return Stream.concat(persons1.stream(), persons2.stream())
         .sorted(Comparator.comparing(Person::createdAt))
         .limit(limit)
         .collect(Collectors.toList());
-
-    return result;
   }
 }

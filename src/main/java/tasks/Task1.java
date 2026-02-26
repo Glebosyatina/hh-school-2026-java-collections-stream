@@ -25,17 +25,12 @@ public class Task1 {
     Set<Person> persons = personService.findPersons(personIds);
 
     //пробежатся по сету перекинуть в мапу где ключом будет id, -> к любому Person будем иметь доступ за O(1)
-    Map<Integer, Person> personsMap = new HashMap<>();
-    for (Person pers : persons){
-      personsMap.put(pers.id(), pers);
-    }
+    Map<Integer, Person> personsMap = persons.stream()
+        .collect(Collectors.toMap(Person::id, p -> p));
 
     //собираем в нужном порядке в List, по итогу думаю сложность O(m+n)
-    List<Person> result = new ArrayList<>();
-    for (Integer id : personIds){
-      result.add(personsMap.get(id));
-    }
-
-    return result;
+    return personIds.stream()
+        .map(personsMap::get)
+        .collect(Collectors.toList());
   }
 }

@@ -38,8 +38,10 @@ public class Task9 {
 
   // Тут фронтовая логика, делаем за них работу - склеиваем ФИО
   public String convertPersonToString(Person person) {
+    //String result = "";
+    //проще через метод String.join
+    return String.join(" ", person.firstName(), person.middleName(), person.secondName());
     /*
-    String result = "";
     if (person.secondName() != null) {
       result += person.secondName();
     }
@@ -52,8 +54,6 @@ public class Task9 {
       result += " " + person.secondName();
     }
      */
-    //Вообще лучше не делать за них работу, отдать json а дальше на фронте пусть раскладывают что кому надо
-    return person.toString();
   }
 
   // словарь id персоны -> ее имя
@@ -66,8 +66,10 @@ public class Task9 {
       }
     }
      */
-    //можно сделать через стрим, компактнее, читабельнее
+    //можно сделать через стрим, компактнее, читабельнее, может упасть если в коллекции попадется несколько дубликатов
+    //вылетит IllegalStatException, для этого убираем дубликаты через distinct
     return persons.stream()
+        .distinct()
         .collect(Collectors.toMap(Person::id, Person::firstName));
   }
 
@@ -114,8 +116,9 @@ public class Task9 {
     //тут перемешали первую последовательность
     Collections.shuffle(integers);
     // но когда мы на основе перемешанной последовательности создаем HashSet
-    // метод hashCode (который используется для определения бакета) для Integer возвращает само значение int, проверил руками :)
-    // то есть по итоге ключи в мапе будут отсортированы по бакетам, как то так
+
+    //HashSet внутри использует HashMap, и при добавлениии элементов метод hashCode для Integer возвращает само число,
+    //поэтому они сохраняются в отсортированном порядке
     Set<Integer> set = new HashSet<>(integers);
     assert snapshot.toString().equals(set.toString());
   }

@@ -15,6 +15,7 @@ public class Task3 {
 
   public static List<Person> sort(Collection<Person> persons) {
     //sorted применяем к стриму задавая порядок сортировки по полям
+    //думаю проблема может быть в компараторе при обработке null значений, наверное
     List<Person> result = persons.stream()
         .sorted(Comparator.comparing(Person::secondName)
             .thenComparing(Person::firstName)

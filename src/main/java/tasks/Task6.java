@@ -21,10 +21,9 @@ public class Task6 {
                                                   Collection<Area> areas) {
     Set<String> result = new HashSet<>();
 
-    Map<Integer, String> areasMap = new HashMap<>(); //конвертим в map чтобы брать по индексу название
-    for (Area area : areas){
-      areasMap.put(area.getId(), area.getName());
-    }
+    //конвертим в map чтобы брать по индексу название
+    Map<Integer, String> areasMap = areas.stream()
+        .collect(Collectors.toMap(Area::getId, Area::getName));
 
     //надо пробежаться по персонам, вытащить id регионов связанных с этим персом, и склеить строки с именем перса и регионами, связанными с ним
     //collectors.joining для склейки строк
@@ -32,8 +31,7 @@ public class Task6 {
       Set<Integer> regionsIds = personAreaIds.get(pers.id());
       for (Integer regId : regionsIds){
         //склеивам имя - регион
-        String persReg = Stream.of(pers.firstName(), areasMap.get(regId))
-            .collect(Collectors.joining(" - ","", ""));
+        String persReg = pers.firstName() + " - " + areasMap.get(regId);
         //добавляем в релуьтирующий set
         result.add(persReg);
       }

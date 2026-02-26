@@ -29,33 +29,16 @@ public class Task8 {
 
     Set<Resume> resumes = personService.findResumes(mapIdPerson.keySet());
 
-    //для сбора резюме по каждой персоне, заполняем мапу, ключи id персон, заполянем тут кллючи чтобы те у кого нет резюме тоже не потерялись
-    Map<Integer, List<Resume>> mapPersons = new HashMap<>();
-    for (Person pers : persons){
-      mapPersons.put(pers.id(), new ArrayList<>());
-    }
+    //мапа хранящая id персоны и набор принадлежащих ей резюме
+    Map<Integer, Set<Resume>> mapPers = resumes.stream()
+        .collect(Collectors.groupingBy(Resume::personId, Collectors.toSet()));
 
-    //заполняем по каждому человеку список его резюме
-    for (Resume resume : resumes){
-      Integer persId = resume.personId();
-      //вытаскиваем и дополняем список резюме каждой персоны
-      List<Resume> persResumes = mapPersons.get(persId);
-
-      persResumes.add(resume);
-
-      mapPersons.put(persId, persResumes);
-    }
-
-    Set<PersonWithResumes> result = new HashSet<>();
-
-    //теперь из этой мапы переносим в сет из PersonWithResumes
-    for (Map.Entry<Integer, List<Resume>> entry : mapPersons.entrySet()){
-      Person pers = mapIdPerson.get(entry.getKey());
-      Set<Resume> resms = new HashSet<>(entry.getValue());
-      //создаем PersonWithResume инициализуем поля Person через мапу, а поле Set<Resumes> через конверт List -> Set
-      result.add(new PersonWithResumes(pers, resms));
-    }
-
-    return result;
+    //сначала достаем все id персон( чтобы не пропустить тех у кого нет резюме), далее через
+    //.map создаем PersonWithResume(не забыв проверить если резюме нет(null) то создать пустой сет)
+    return mapIdPerson.keySet().stream()
+        .map(p -> {
+          return new PersonWithResumes(mapIdPerson.get(p), mapPers.get(p) == null ? Collections.emptySet() : mapPers.get(p));
+        })
+        .collect(Collectors.toSet());
   }
 }
