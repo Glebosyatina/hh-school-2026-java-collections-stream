@@ -30,14 +30,14 @@ public class Task8 {
     Set<Resume> resumes = personService.findResumes(mapIdPerson.keySet());
 
     //мапа хранящая id персоны и набор принадлежащих ей резюме
-    Map<Integer, Set<Resume>> mapPers = resumes.stream()
+    Map<Integer, Set<Resume>> personResumesMap = resumes.stream()
         .collect(Collectors.groupingBy(Resume::personId, Collectors.toSet()));
 
     //сначала достаем все id персон( чтобы не пропустить тех у кого нет резюме), далее через
     //.map создаем PersonWithResume(не забыв проверить если резюме нет(null) то создать пустой сет)
     return mapIdPerson.keySet().stream()
         .map(p -> {
-          return new PersonWithResumes(mapIdPerson.get(p), mapPers.get(p) == null ? Collections.emptySet() : mapPers.get(p));
+          return new PersonWithResumes(mapIdPerson.get(p), personResumesMap.getOrDefault(p, Collections.emptySet()));
         })
         .collect(Collectors.toSet());
   }

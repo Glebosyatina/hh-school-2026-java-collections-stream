@@ -21,10 +21,6 @@ public class Task9 {
   // Конвертируем начиная со второй
   public List<String> getNames(List<Person> persons) {
     //думаю можно без этой проверки обойтись, стрим нормально обрабатывает ситуацию пустого списка
-    //if (persons.size() == 0) {
-      //return Collections.emptyList();
-    //}
-    // persons.remove(0);
     //тут можно просто использовать skip для стрима, не удаляя первый элемент, думаю лучше так
     return persons.stream().skip(1).map(Person::firstName).collect(Collectors.toList());
   }
@@ -38,39 +34,20 @@ public class Task9 {
 
   // Тут фронтовая логика, делаем за них работу - склеиваем ФИО
   public String convertPersonToString(Person person) {
-    //String result = "";
-    //проще через метод String.join
-    return String.join(" ", person.firstName(), person.middleName(), person.secondName());
-    /*
-    if (person.secondName() != null) {
-      result += person.secondName();
-    }
-
-    if (person.firstName() != null) {
-      result += " " + person.firstName();
-    }
-
-    if (person.secondName() != null) {
-      result += " " + person.secondName();
-    }
-     */
+    return String.join(" ", person.firstName() != null ? person.firstName() : null,
+        person.middleName() != null ? person.middleName() : null,
+        person.secondName() != null ? person.secondName() : null);
   }
 
   // словарь id персоны -> ее имя
   public Map<Integer, String> getPersonNames(Collection<Person> persons) {
-    /*
-    Map<Integer, String> map = new HashMap<>(1);
-    for (Person person : persons) {
-      if (!map.containsKey(person.id())) {
-        map.put(person.id(), convertPersonToString(person));
-      }
-    }
-     */
     //можно сделать через стрим, компактнее, читабельнее, может упасть если в коллекции попадется несколько дубликатов
-    //вылетит IllegalStatException, для этого убираем дубликаты через distinct
+    //вылетит IllegalStatException, для этого убираем дубликаты через toMap,с указанием что делать с дубликатами
     return persons.stream()
-        .distinct()
-        .collect(Collectors.toMap(Person::id, Person::firstName));
+        .collect(Collectors.toMap(Person::id,
+            Person::firstName,
+            (exist, replace) -> exist)
+        );
   }
 
   // есть ли совпадающие в двух коллекциях персоны?
@@ -82,19 +59,6 @@ public class Task9 {
     Set<Person> set = new HashSet<>(persons1);
     return persons2.stream()
         .anyMatch(set::contains);
-    /*
-    boolean has = false;
-    for (Person person1 : persons1) {
-      for (Person person2 : persons2) {
-        if (person1.equals(person2)) {
-          //has = true;
-          //как только встретили хотя бы одно совпадение уже можно возвращать true и не делать лишних итераций
-          return true;
-        }
-      }
-    }
-    return has;
-     */
   }
 
   // Посчитать число четных чисел
@@ -118,7 +82,10 @@ public class Task9 {
     // но когда мы на основе перемешанной последовательности создаем HashSet
 
     //HashSet внутри использует HashMap, и при добавлениии элементов метод hashCode для Integer возвращает само число,
-    //поэтому они сохраняются в отсортированном порядке
+    // видимо когда у нас диапазон от 1 до N при вставке в массив бакетов,
+    // и выполнении внутренней функции HashMap для вычисления индекса бакета они
+    // заполняются друг за другом и
+    // из за этого и получается такой эффект
     Set<Integer> set = new HashSet<>(integers);
     assert snapshot.toString().equals(set.toString());
   }
