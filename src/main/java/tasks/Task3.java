@@ -16,24 +16,13 @@ public class Task3 {
   public static List<Person> sort(Collection<Person> persons) {
     //sorted применяем к стриму задавая порядок сортировки по полям
     //думаю проблема может быть в компараторе при обработке null значений, наверное
-    //для этого нужен свой null компаратор
-    Comparator<? super String> nullComparator = (a, b) -> {
-      if (a == null && b == null){
-        return 0;
-      }
-      if (a == null) {
-        return -1;
-      }
-      if (b == null){
-        return 1;
-      }
-      return a.compareTo(b);
-    };
-
+    // для этого можно использовать готовый компаратор учитывающий null значения nullsLast
     return persons.stream()
-        .sorted(Comparator.comparing(Person::secondName, nullComparator)
-            .thenComparing(Person::firstName, nullComparator)
-            .thenComparing(Person::createdAt))
+        .sorted(Comparator.nullsLast(
+            Comparator.comparing(Person::secondName)
+                .thenComparing(Person::firstName)
+                .thenComparing(Person::createdAt))
+        )
         .collect(Collectors.toList());
   }
 }

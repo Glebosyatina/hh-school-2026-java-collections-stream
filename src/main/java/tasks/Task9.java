@@ -34,9 +34,10 @@ public class Task9 {
 
   // Тут фронтовая логика, делаем за них работу - склеиваем ФИО
   public String convertPersonToString(Person person) {
-    return String.join(" ", person.firstName() != null ? person.firstName() : null,
-        person.middleName() != null ? person.middleName() : null,
-        person.secondName() != null ? person.secondName() : null);
+    return String.join(" ",
+        person.firstName() != null ? person.firstName() : "",
+        person.middleName() != null ? person.middleName() : "",
+        person.secondName() != null ? person.secondName() : "");
   }
 
   // словарь id персоны -> ее имя
