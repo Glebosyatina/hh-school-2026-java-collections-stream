@@ -4,8 +4,9 @@ import common.Person;
 import common.PersonService;
 import common.PersonWithResumes;
 import common.Resume;
-import java.util.Collection;
-import java.util.Set;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /*
   Еще один вариант задачи обогащения
@@ -21,7 +22,23 @@ public class Task8 {
   }
 
   public Set<PersonWithResumes> enrichPersonsWithResumes(Collection<Person> persons) {
-    Set<Resume> resumes = personService.findResumes(Set.of());
-    return Set.of();
+
+    //findResumes принимаем коллекцию idшек персон, нужно из коллекции персон вытащить idшки, и затем передать эту коллекцию
+    Map<Integer, Person> mapIdPerson = persons.stream()
+        .collect(Collectors.toMap(Person::id, x -> x));
+
+    Set<Resume> resumes = personService.findResumes(mapIdPerson.keySet());
+
+    //мапа хранящая id персоны и набор принадлежащих ей резюме
+    Map<Integer, Set<Resume>> personResumesMap = resumes.stream()
+        .collect(Collectors.groupingBy(Resume::personId, Collectors.toSet()));
+
+    //сначала достаем все id персон( чтобы не пропустить тех у кого нет резюме), далее через
+    //.map создаем PersonWithResume(не забыв проверить если резюме нет(null) то создать пустой сет)
+    return mapIdPerson.keySet().stream()
+        .map(p -> {
+          return new PersonWithResumes(mapIdPerson.get(p), personResumesMap.getOrDefault(p, Collections.emptySet()));
+        })
+        .collect(Collectors.toSet());
   }
 }

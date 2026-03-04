@@ -2,10 +2,10 @@ package tasks;
 
 import common.Area;
 import common.Person;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /*
 Имеются
@@ -19,6 +19,24 @@ public class Task6 {
   public static Set<String> getPersonDescriptions(Collection<Person> persons,
                                                   Map<Integer, Set<Integer>> personAreaIds,
                                                   Collection<Area> areas) {
-    return new HashSet<>();
+    Set<String> result = new HashSet<>();
+
+    //конвертим в map чтобы брать по индексу название
+    Map<Integer, String> areasMap = areas.stream()
+        .collect(Collectors.toMap(Area::getId, Area::getName));
+
+    //надо пробежаться по персонам, вытащить id регионов связанных с этим персом, и склеить строки с именем перса и регионами, связанными с ним
+    //collectors.joining для склейки строк
+    for (Person pers : persons){
+      Set<Integer> regionsIds = personAreaIds.get(pers.id());
+      for (Integer regId : regionsIds){
+        //склеивам имя - регион
+        String persReg = pers.firstName() + " - " + areasMap.get(regId);
+        //добавляем в релуьтирующий set
+        result.add(persReg);
+      }
+    }
+
+    return result;
   }
 }
